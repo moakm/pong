@@ -10,6 +10,7 @@ pygame.display.set_caption("Pong")
 run = True
 direction = [0, 1]
 angle = [0, 1, 2]
+player1_score = player2_score = 0
 
 # COLORS
 BLUE = (0, 0, 255)
@@ -28,7 +29,7 @@ left_paddle_y = right_paddle_y = HEIGHT / 2 - paddle_height / 2
 left_paddle_x, right_paddle_x = (100 - paddle_width / 2), (WIDTH - (100 - paddle_width / 2))
 right_paddle_vel = left_paddle_vel = 0
 
-#skills
+# skills
 left_skill = right_skill = 0
 left_skill_remaining = right_skill_remaining = 3
 
@@ -63,25 +64,27 @@ while run:
     if ball_y <= 0 + radius or ball_y >= HEIGHT - radius:
         ball_vel_y *= -1
     if ball_x >= WIDTH - radius:
+        player1_score += 1
         ball_x, ball_y = WIDTH / 2 - radius, HEIGHT / 2 - radius
         dir = random.choice(direction)
         ang = random.choice(angle)
         if dir == 0:
             if ang == 0:
                 ball_vel_y, ball_vel_x = -0.35, 0.25
-            if ang ==1:
+            if ang == 1:
                 ball_vel_y, ball_vel_x = -0.25, 0.25
             if ang == 2:
                 ball_vel_y, ball_vel_x = -0.25, 0.35
         if dir == 1:
             if ang == 0:
                 ball_vel_y, ball_vel_x = 0.35, 0.25
-            if ang ==1:
+            if ang == 1:
                 ball_vel_y, ball_vel_x = 0.25, 0.25
             if ang == 2:
                 ball_vel_y, ball_vel_x = 0.25, 0.35
 
     if ball_x <= 0 + radius:
+        player2_score += 1
         ball_x, ball_y = WIDTH / 2 - radius, HEIGHT / 2 - radius
         ball_vel_x, ball_vel_y = 0.2, 0.2
         dir = random.choice(direction)
@@ -100,7 +103,7 @@ while run:
                 ball_vel_y, ball_vel_x = 0.25, 0.25
             if ang == 2:
                 ball_vel_y, ball_vel_x = 0.25, 0.35
-                
+
     # PADDLE's MOVEMENT CONTROL
     if left_paddle_y >= HEIGHT - paddle_height:
         left_paddle_y = HEIGHT - paddle_height
@@ -135,7 +138,7 @@ while run:
         left_paddle_y = ball_y
         left_skill = 0
         left_skill_remaining -= 1
-        
+
     if right_skill == 1:
         if right_paddle_x <= ball_x <= right_paddle_x + paddle_width:
             if right_paddle_y <= ball_y <= right_paddle_y + paddle_height:
@@ -153,6 +156,18 @@ while run:
     ball_y += ball_vel_y
     right_paddle_y += right_paddle_vel
     left_paddle_y += left_paddle_vel
+
+    # scoreboard
+    font = pygame.font.SysFont('callibri', 32)
+    score_1 = font.render(f"Player 1: {str(player1_score)}", True, WHITE)
+    wn.blit(score_1, (25, 25))
+    score_2 = font.render(f"Player 2: {str(player2_score)}", True, WHITE)
+    wn.blit(score_2, (855, 25))
+    skill_left_1 = font.render(f"Skill uses remaining: {str(left_skill_remaining)}", True, WHITE)
+    wn.blit(skill_left_1, (25, 65))
+    skill_left_2 = font.render(f"Skill uses remaining: {str(right_skill_remaining)}", True, WHITE)
+    wn.blit(skill_left_2, (730, 65))
+
     # objects
     pygame.draw.circle(wn, BLUE, (ball_x, ball_y), radius)
     pygame.draw.rect(wn, RED, pygame.Rect(left_paddle_x, left_paddle_y, paddle_width, paddle_height))
@@ -161,5 +176,18 @@ while run:
     if left_skill == 1:
         pygame.draw.circle(wn, WHITE, (left_paddle_x + 10, left_paddle_y + 10), 4)
     if right_skill == 1:
-        pygame.draw.circle(wn, WHITE, (right_paddle_x + 10, left_paddle_y + 10), 4)
+        pygame.draw.circle(wn, WHITE, (right_paddle_x + 10, right_paddle_y + 10), 4)
+
+    # Endscreen
+    winning_font = pygame.font.SysFont('callibri', 80)
+    if player1_score >=5:
+        wn.fill(BLACK)
+        endscreen = winning_font.render("Player 1 WON !!!!", True, WHITE)
+        wn.blit(endscreen, (200, 250))
+    if player2_score >=5:
+        wn.fill(BLACK)
+        endscreen = winning_font.render("Player 2 WON !!!!", True, WHITE)
+        wn.blit(endscreen, (200, 250))
+    
+
     pygame.display.update()

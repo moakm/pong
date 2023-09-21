@@ -15,6 +15,7 @@ angle = [0, 1, 2]
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 # for the ball
 radius = 15
@@ -27,6 +28,10 @@ left_paddle_y = right_paddle_y = HEIGHT / 2 - paddle_height / 2
 left_paddle_x, right_paddle_x = (100 - paddle_width / 2), (WIDTH - (100 - paddle_width / 2))
 right_paddle_vel = left_paddle_vel = 0
 
+#skills
+left_skill = right_skill = 0
+left_skill_remaining = right_skill_remaining = 3
+
 # MAIN LOOP
 while run:
     wn.fill(BLACK)
@@ -38,10 +43,14 @@ while run:
                 right_paddle_vel = -0.3
             if i.key == pygame.K_DOWN:
                 right_paddle_vel = 0.3
+            if i.key == pygame.K_LEFT and right_skill_remaining > 0:
+                right_skill = 1
             if i.key == pygame.K_w:
                 left_paddle_vel = -0.3
             if i.key == pygame.K_s:
                 left_paddle_vel = 0.3
+            if i.key == pygame.K_d and left_skill_remaining > 0:
+                left_skill = 1
         if i.type == pygame.KEYUP:
             right_paddle_vel = 0
             left_paddle_vel = 0
@@ -104,11 +113,28 @@ while run:
         if left_paddle_y <= ball_y <= left_paddle_y + paddle_height:
             ball_x = left_paddle_x + paddle_width
             ball_vel_x *= -1
-    # roght paddle
+    # right paddle
     if right_paddle_x <= ball_x <= right_paddle_x + paddle_width:
         if right_paddle_y <= ball_y <= right_paddle_y + paddle_height:
             ball_x = right_paddle_x
             ball_vel_x *= -1
+
+    # skill execution
+    if left_skill == 1:
+        if left_paddle_x <= ball_x <= left_paddle_x + paddle_width:
+            if left_paddle_y <= ball_y <= left_paddle_y + paddle_height:
+                ball_x = left_paddle_x + paddle_width
+                ball_vel_x *= -2.5
+                left_skill = 0
+                left_skill_remaining -= 1
+    if right_skill == 1:
+        if right_paddle_x <= ball_x <= right_paddle_x + paddle_width:
+            if right_paddle_y <= ball_y <= right_paddle_y + paddle_height:
+                ball_x = right_paddle_x
+                ball_vel_x *= -2.5
+                right_skill = 0
+                right_skill_remaining -= 1
+
     # movement
     ball_x += ball_vel_x
     ball_y += ball_vel_y
@@ -118,4 +144,9 @@ while run:
     pygame.draw.circle(wn, BLUE, (ball_x, ball_y), radius)
     pygame.draw.rect(wn, RED, pygame.Rect(left_paddle_x, left_paddle_y, paddle_width, paddle_height))
     pygame.draw.rect(wn, RED, pygame.Rect(right_paddle_x, right_paddle_y, paddle_width, paddle_height))
+
+    if left_skill == 1:
+        pygame.draw.circle(wn, WHITE, (left_paddle_x + 10, left_paddle_y + 10), 4)
+    if right_skill == 1:
+        pygame.draw.circle(wn, WHITE, (right_paddle_x + 10, left_paddle_y + 10), 4)
     pygame.display.update()

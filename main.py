@@ -45,12 +45,16 @@ while run:
                 right_paddle_vel = 0.3
             if i.key == pygame.K_LEFT and right_skill_remaining > 0:
                 right_skill = 1
+            if i.key == pygame.K_RIGHT and right_skill_remaining > 0:
+                right_skill = 2
             if i.key == pygame.K_w:
                 left_paddle_vel = -0.3
             if i.key == pygame.K_s:
                 left_paddle_vel = 0.3
             if i.key == pygame.K_d and left_skill_remaining > 0:
                 left_skill = 1
+            if i.key == pygame.K_a and left_skill_remaining > 0:
+                left_skill = 2
         if i.type == pygame.KEYUP:
             right_paddle_vel = 0
             left_paddle_vel = 0
@@ -127,6 +131,11 @@ while run:
                 ball_vel_x *= -2.5
                 left_skill = 0
                 left_skill_remaining -= 1
+    elif left_skill == 2:
+        left_paddle_y = ball_y
+        left_skill = 0
+        left_skill_remaining -= 1
+        
     if right_skill == 1:
         if right_paddle_x <= ball_x <= right_paddle_x + paddle_width:
             if right_paddle_y <= ball_y <= right_paddle_y + paddle_height:
@@ -134,6 +143,10 @@ while run:
                 ball_vel_x *= -2.5
                 right_skill = 0
                 right_skill_remaining -= 1
+    elif right_skill == 2:
+        right_paddle_y = ball_y
+        right_skill = 0
+        right_skill_remaining -= 1
 
     # movement
     ball_x += ball_vel_x

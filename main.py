@@ -1,10 +1,13 @@
 from lib.utils.initials import *
 from lib.classes.Ball import Ball
+from lib.classes.Paddle import Paddle
 
 # skills
 left_skill = right_skill = 0
 left_skill_remaining = right_skill_remaining = 3
 ball = Ball(WIDTH / 2 - radius, HEIGHT / 2 - radius, radius)
+left_paddle = Paddle(left_paddle_x, left_paddle_y)
+right_paddle = Paddle(right_paddle_x, right_paddle_y)
 # MAIN LOOP
 while run:
     wn.fill(BLACK)
@@ -14,34 +17,28 @@ while run:
             run = False
         elif i.type == pygame.KEYDOWN:
             if i.key == pygame.K_UP:
-                right_paddle_vel = -0.7
+                right_paddle.vel = -0.7
             if i.key == pygame.K_DOWN:
-                right_paddle_vel = 0.7
+                right_paddle.vel = 0.7
             if i.key == pygame.K_LEFT and right_skill_remaining > 0:
                 right_skill = 1
             if i.key == pygame.K_RIGHT and right_skill_remaining > 0:
                 right_skill = 2
             if i.key == pygame.K_w:
-                left_paddle_vel = -0.7
+                left_paddle.vel = -0.7
             if i.key == pygame.K_s:
-                left_paddle_vel = 0.7
+                left_paddle.vel = 0.7
             if i.key == pygame.K_d and left_skill_remaining > 0:
                 left_skill = 1
             if i.key == pygame.K_a and left_skill_remaining > 0:
                 left_skill = 2
         if i.type == pygame.KEYUP:
-            right_paddle_vel = 0
-            left_paddle_vel = 0
+            right_paddle.vel = 0
+            left_paddle.vel = 0
 
     # PADDLE's MOVEMENT CONTROL
-    if left_paddle_y >= HEIGHT - paddle_height:
-        left_paddle_y = HEIGHT - paddle_height
-    if left_paddle_y <= 0:
-        left_paddle_y = 0
-    if right_paddle_y >= HEIGHT - paddle_height:
-        right_paddle_y = HEIGHT - paddle_height
-    if right_paddle_y <= 0:
-        right_paddle_y = 0
+    left_paddle.collisions()
+    right_paddle.collisions()
 
     # skill execution
     if left_skill == 1:
@@ -70,10 +67,15 @@ while run:
 
     # movement
     ball.move()
-    ball.check_collisions(left_paddle_x, left_paddle_y, right_paddle_x, right_paddle_y, paddle_width, paddle_height)
+    ball.check_collisions(left_paddle, right_paddle)
     ball.reset()
-    right_paddle_y += right_paddle_vel
-    left_paddle_y += left_paddle_vel
+    left_paddle.y_pos += left_paddle.vel
+    right_paddle.y_pos += right_paddle.vel
+
+    # objects
+    ball.draw()
+    left_paddle.draw()
+    right_paddle.draw()
 
     # scoreboard
     font = pygame.font.SysFont('callibri', 32)
@@ -85,11 +87,6 @@ while run:
     wn.blit(skill_left_1, (25, 65))
     skill_left_2 = font.render(f"Skill uses remaining: {str(right_skill_remaining)}", True, WHITE)
     wn.blit(skill_left_2, (730, 65))
-
-    # objects
-    ball.draw()
-    pygame.draw.rect(wn, RED, pygame.Rect(left_paddle_x, left_paddle_y, paddle_width, paddle_height))
-    pygame.draw.rect(wn, RED, pygame.Rect(right_paddle_x, right_paddle_y, paddle_width, paddle_height))
 
     if left_skill == 1:
         pygame.draw.circle(wn, WHITE, (left_paddle_x + 10, left_paddle_y + 10), 4)

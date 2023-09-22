@@ -18,17 +18,16 @@ class Ball:
         self.x += self.velocity_x
         self.y += self.velocity_y
 
-    def check_collisions(self, left_paddle_x, left_paddle_y, right_paddle_x, right_paddle_y, paddle_width,
-                         paddle_height):
+    def check_collisions(self, left_paddle, right_paddle):
         # ball collision handling
         if self.y <= 0 + self.radius or self.y >= HEIGHT - self.radius:
             self.velocity_y *= -1
-        if left_paddle_x <= self.x <= left_paddle_x + paddle_width:
-            if left_paddle_y <= self.y <= left_paddle_y + paddle_height:
+        if left_paddle.x_pos <= self.x <= left_paddle.x_pos + paddle_width:
+            if left_paddle.y_pos <= self.y <= left_paddle.y_pos + paddle_height:
                 self.velocity_x *= -1
 
-        if right_paddle_x <= self.x <= right_paddle_x + paddle_width:
-            if right_paddle_y <= self.y <= right_paddle_y + paddle_height:
+        if right_paddle.x_pos <= self.x <= right_paddle.x_pos + paddle_width:
+            if right_paddle.y_pos <= self.y <= right_paddle.y_pos + paddle_height:
                 self.velocity_x *= -1
 
     def reset(self):

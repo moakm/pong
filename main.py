@@ -2,9 +2,6 @@ from lib.utils.initials import *
 from lib.classes.Ball import Ball
 from lib.classes.Paddle import Paddle
 
-# skills
-left_skill = right_skill = 0
-left_skill_remaining = right_skill_remaining = 3
 ball = Ball(WIDTH / 2 - radius, HEIGHT / 2 - radius, radius)
 left_paddle = Paddle(left_paddle_x, left_paddle_y)
 right_paddle = Paddle(right_paddle_x, right_paddle_y)
@@ -17,17 +14,17 @@ while run:
             run = False
         elif i.type == pygame.KEYDOWN:
             if i.key == pygame.K_UP:
-                right_paddle.vel = -0.7
+                right_paddle.vel = -0.95
             if i.key == pygame.K_DOWN:
-                right_paddle.vel = 0.7
+                right_paddle.vel = 0.95
             if i.key == pygame.K_LEFT and right_skill_remaining > 0:
                 right_skill = 1
             if i.key == pygame.K_RIGHT and right_skill_remaining > 0:
                 right_skill = 2
             if i.key == pygame.K_w:
-                left_paddle.vel = -0.7
+                left_paddle.vel = -0.95
             if i.key == pygame.K_s:
-                left_paddle.vel = 0.7
+                left_paddle.vel = 0.95
             if i.key == pygame.K_d and left_skill_remaining > 0:
                 left_skill = 1
             if i.key == pygame.K_a and left_skill_remaining > 0:
@@ -42,26 +39,26 @@ while run:
 
     # skill execution
     if left_skill == 1:
-        if left_paddle_x <= ball.x <= left_paddle_x + paddle_width:
-            if left_paddle_y <= ball.y <= left_paddle_y + paddle_height:
-                ball.x = left_paddle_x + paddle_width
-                ball.velocity_x *= -3.5
+        if left_paddle.x_pos <= ball.x <= left_paddle.x_pos + paddle_width:
+            if left_paddle.y_pos <= ball.y <= left_paddle.y_pos + paddle_height:
+                ball.x = left_paddle.x_pos + paddle_width
+                ball.velocity_x *= 3.5
                 left_skill = 0
                 left_skill_remaining -= 1
     elif left_skill == 2:
-        left_paddle_y = ball.y
+        left_paddle.y_pos = ball.y
         left_skill = 0
         left_skill_remaining -= 1
 
     if right_skill == 1:
-        if right_paddle_x <= ball.x <= right_paddle_x + paddle_width:
-            if right_paddle_y <= ball.y <= right_paddle_y + paddle_height:
-                ball.x = right_paddle_x
-                ball.velocity_x *= -3.5
+        if right_paddle.x_pos <= ball.x <= right_paddle.x_pos + paddle_width:
+            if right_paddle.y_pos <= ball.y <= right_paddle.y_pos + paddle_height:
+                ball.x = right_paddle.x_pos
+                ball.velocity_x *= 3.5
                 right_skill = 0
                 right_skill_remaining -= 1
     elif right_skill == 2:
-        right_paddle_y = ball.y
+        right_paddle.y_pos = ball.y
         right_skill = 0
         right_skill_remaining -= 1
 
@@ -89,9 +86,9 @@ while run:
     wn.blit(skill_left_2, (730, 65))
 
     if left_skill == 1:
-        pygame.draw.circle(wn, WHITE, (left_paddle_x + 10, left_paddle_y + 10), 4)
+        pygame.draw.circle(wn, WHITE, (left_paddle.x_pos + 10, left_paddle.y_pos + 10), 4)
     if right_skill == 1:
-        pygame.draw.circle(wn, WHITE, (right_paddle_x + 10, right_paddle_y + 10), 4)
+        pygame.draw.circle(wn, WHITE, (right_paddle.x_pos + 10, right_paddle.y_pos + 10), 4)
 
     # Endscreen
     winning_font = pygame.font.SysFont('callibri', 80)

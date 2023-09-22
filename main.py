@@ -1,41 +1,14 @@
-import pygame
-import random
-
-pygame.init()
-
-# INITIALS
-WIDTH, HEIGHT = 1000, 600
-wn = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Pong")
-run = True
-direction = [0, 1]
-angle = [0, 1, 2]
-player1_score = player2_score = 0
-
-# COLORS
-BLUE = (0, 0, 255)
-RED = (255, 0, 0)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-
-# for the ball
-radius = 15
-ball_x, ball_y = WIDTH / 2 - radius, HEIGHT / 2 - radius
-ball_vel_x, ball_vel_y = 0.2, 0.2
-
-# for the paddles
-paddle_width, paddle_height = 20, 120
-left_paddle_y = right_paddle_y = HEIGHT / 2 - paddle_height / 2
-left_paddle_x, right_paddle_x = (100 - paddle_width / 2), (WIDTH - (100 - paddle_width / 2))
-right_paddle_vel = left_paddle_vel = 0
+from lib.utils.initials import *
+from lib.classes.Ball import Ball
 
 # skills
 left_skill = right_skill = 0
 left_skill_remaining = right_skill_remaining = 3
-
+ball = Ball(WIDTH / 2 - radius, HEIGHT / 2 - radius, radius)
 # MAIN LOOP
 while run:
     wn.fill(BLACK)
+
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             run = False
@@ -60,8 +33,8 @@ while run:
             right_paddle_vel = 0
             left_paddle_vel = 0
 
-    # BALL'S MOVEMENT CONTROLS
-    if ball_y <= 0 + radius or ball_y >= HEIGHT - radius:
+    # BALL'S MOVEMENT CONTROLS old
+    """if ball_y <= 0 + radius or ball_y >= HEIGHT - radius:
         ball_vel_y *= -1
     if ball_x >= WIDTH - radius:
         player1_score += 1
@@ -102,7 +75,7 @@ while run:
             if ang == 1:
                 ball_vel_y, ball_vel_x = 0.25, 0.25
             if ang == 2:
-                ball_vel_y, ball_vel_x = 0.25, 0.35
+                ball_vel_y, ball_vel_x = 0.25, 0.35"""
 
     # PADDLE's MOVEMENT CONTROL
     if left_paddle_y >= HEIGHT - paddle_height:
@@ -152,8 +125,9 @@ while run:
         right_skill_remaining -= 1
 
     # movement
-    ball_x += ball_vel_x
-    ball_y += ball_vel_y
+    ball.move()
+    ball.check_collisions(left_paddle_x, left_paddle_y, right_paddle_x, right_paddle_y, paddle_width, paddle_height)
+    ball.reset()
     right_paddle_y += right_paddle_vel
     left_paddle_y += left_paddle_vel
 
@@ -169,7 +143,7 @@ while run:
     wn.blit(skill_left_2, (730, 65))
 
     # objects
-    pygame.draw.circle(wn, BLUE, (ball_x, ball_y), radius)
+    pygame.draw.circle(wn, BLUE, (ball.x, ball.y), ball.radius)
     pygame.draw.rect(wn, RED, pygame.Rect(left_paddle_x, left_paddle_y, paddle_width, paddle_height))
     pygame.draw.rect(wn, RED, pygame.Rect(right_paddle_x, right_paddle_y, paddle_width, paddle_height))
 
